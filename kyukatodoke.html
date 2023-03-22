@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>画像に文字を合成</title>
+</head>
+<body>
+	<label for="text-input">テキスト:</label>
+	<input type="text" id="text-input" value="下斗米 敦士 (SI2)">
+	<button onclick="draw()">描画する</button><br>
+	<canvas id="canvas" width="1350" height="1080"></canvas>
+	<script>
+		// 画像のパス
+		var imagePath = "base.jpeg";
+
+		// 画像の読み込み
+		var image = new Image();
+		image.src = imagePath;
+
+		// canvas要素の取得
+		var canvas = document.getElementById("canvas");
+		var context = canvas.getContext("2d");
+
+		// 描画関数
+		function draw() {
+			// 画像を描画
+			context.drawImage(image, 0, 0);
+
+			// テキストを取得
+			var text = document.getElementById("text-input").value;
+
+			// 文字列を描画
+			context.font = "sans-serif";
+			context.fillStyle = "white";
+			context.fillText(text, 100, 640); // X座標: 100, Y座標: 100
+
+			// 画像と文字列を合成
+			var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+			var data = imageData.data;
+			for (var i = 0; i < data.length; i += 4) {
+				if (data[i] == 255 && data[i+1] == 255 && data[i+2] == 255) { // 白色のピクセルの場合
+					data[i] = 0;
+					data[i+1] = 0;
+					data[i+2] = 0;
+				}
+			}
+			context.putImageData(imageData, 0, 0);
+		}
+	</script>
+</body>
+</html>
